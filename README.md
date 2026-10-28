@@ -239,10 +239,10 @@ All posters are stored in `assets/posters/` and displayed throughout this README
 
 Use the links below to access the available project builds.
 
-- **Android:** [Download Android](ANDROID_DOWNLOAD_LINK)
-- **Windows:** [Download Windows](WINDOWS_DOWNLOAD_LINK)
-- **Website:** [Visit the website](WEBSITE_LINK)
-- **All releases:** [GitHub Releases](GITHUB_RELEASES_LINK)
+- **Android:** [Download Android](https://github.com/Nova2585nd/Nova-connect-VPN-/releases/tag/Windows%26Android-versions)
+- **Windows:** [Download Windows](https://github.com/Nova2585nd/Nova-connect-VPN-/releases/tag/Windows%26Android-versions)
+- **Website:** [Visit the website](vpn.nova2585nd.ir)
+- **All releases:** [GitHub Releases](https://github.com/Nova2585nd/Nova-connect-VPN-/releases/tag/Windows%26Android-versions)
 
 Check the release notes for the version number, changes, and compatibility information before installing a build.
 
@@ -295,10 +295,11 @@ Please report reproducible issues with relevant application versions, operating 
 
 ## Feedback & Contact
 
-- **GitHub repository:** [GITHUB_REPOSITORY_LINK]
-- **Telegram:** [TELEGRAM_LINK]
-- **Website:** [WEBSITE_LINK]
-- **Downloads:** [DOWNLOADS_PAGE_LINK]
+- **GitHub repository:** [https://github.com/Nova2585nd/Nova-connect-VPN-]
+- **Telegram:** [https://t.me/Nova_2585]
+- **X:** [https://x.com/Nova_2585_nd]
+- **Website:** [nova2585nd.ir]
+- **Downloads:** [https://github.com/Nova2585nd/Nova-connect-VPN-/releases]
 
 Bug reports, technical feedback, and suggestions that help improve the project are welcome.
 
