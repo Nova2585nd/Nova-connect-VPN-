@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="fa" dir="rtl" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data: file:">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nova Connect</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="bg"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span></div>
+<div id="toast"></div>
+
+<div id="top" class="top"><div class="brand"><img src="../../assets/logo.svg" alt=""><b id="ttl">خانه</b></div>
+  <span id="codeTag" class="codetag"></span><button id="bell" class="icon-btn bellb" title="اطلاعیه‌ها"><span data-ico="bell"></span><i id="bellN" class="badge-n hidden"></i></button></div>
+<nav id="nav" class="bnav">
+  <button data-tab="home"><span data-ico="home"></span><em>خانه</em></button><button data-tab="servers"><span data-ico="list"></span><em>سرورها</em></button>
+  <button data-tab="sub"><span data-ico="cart"></span><em>اشتراک</em></button><button data-tab="settings"><span data-ico="gear"></span><em>تنظیمات</em></button>
+</nav>
+
+<main>
+<section id="v-welcome" class="view">
+  <div class="stack center-all">
+    <div class="logo-wrap"><img class="logo-big" src="../../assets/logo.svg" alt="Nova Connect"></div>
+    <h1 class="grad">Nova Connect</h1>
+    <p class="muted c">اتصال سریع و امن، با یک لمس.</p>
+    <button id="wAuto" class="btn primary wide shine"><span class="spinner"></span><span id="wAutoT">ورود</span></button>
+    <p class="muted small c">یک حساب جدید با حجم اولیه برای شما ساخته می‌شود.</p>
+    <button id="wHave" class="btn wide">از قبل شناسه کاربری دارم</button>
+    <div id="wBox" class="hidden wfull"><p class="muted small c">شناسه ۶ رقمی خود را وارد کنید.</p>
+      <div class="field"><input id="wCode" class="codein" dir="ltr" inputmode="numeric" maxlength="6" placeholder="••••••" autocomplete="off"></div>
+      <button id="wGo" class="btn primary wide">ورود با شناسه</button></div>
+    <div id="wErr" class="err"></div>
+  </div>
+</section>
+
+<section id="v-progress" class="view"><div class="stack center-all">
+  <div class="p-orb"><i class="o-a"></i><i class="o-b"></i><img src="../../assets/logo.svg" alt=""></div>
+  <h2 id="pTitle">در حال آماده‌سازی…</h2><p id="pSub" class="muted c"></p>
+  <div class="bar"><i id="pBar"></i></div>
+  <div class="p-meta"><b id="pPct">۰٪</b><span class="muted small">زمان سپری‌شده: <b id="pElapsed">۰:۰۰</b></span></div>
+  <div id="pCodeBox" class="glass card hidden wfull c"><span class="label">شناسه کاربری شما</span><b id="pCode" class="bigcode"></b><span class="muted small">این شناسه را یادداشت کنید؛ برای ورود مجدد لازم است.</span></div>
+  <ul id="pSteps" class="steps glass"></ul><p id="pTip" class="tip muted small c"></p>
+  <div class="row-gap"><button id="pHide" class="btn">ادامه در پس‌زمینه</button><button id="pDiag" class="btn hidden">تشخیص مشکل</button><button id="pDone" class="btn primary hidden">ورود به برنامه</button></div>
+</div></section>
+
+<section id="v-home" class="view shellv"><div class="stack">
+  <div id="hero" class="hero" data-s="idle"><span class="ring r1"></span><span class="ring r2"></span><span class="ring r3"></span><span class="spin"></span><button id="mainBtn" class="power" data-ico="power"></button></div>
+  <div class="status-box"><div class="chip"><i id="dot" class="dot"></i><b id="statusText">متصل نیست</b></div><p id="statusMsg" class="muted small c"></p><button id="modeChip" class="mode-chip"></button></div>
+  <div id="coreBanner" class="banner hidden"><b>هسته اجرا نمی‌شود</b><span>«تشخیص مشکل» علت دقیق را نشان می‌دهد (احتمالاً آنتی‌ویروس).</span><button class="btn small" id="coreDiag">تشخیص مشکل</button></div>
+  <div id="busyCard" class="glass card hidden"><ul id="busySteps" class="steps"></ul></div>
+  <div class="glass card recc"><div class="rec-head"><span class="tag t-best">⚡ بهترین سرور</span><button class="btn attn hidden" id="recBtn">اتصال به این</button></div>
+    <div id="recName" class="name">—</div><div class="sub"><span id="recPing" class="pingtxt">—</span><span id="recNote" class="muted"></span></div></div>
+  <div class="glass card"><div class="rec-head"><span class="tag t-cur">سرور فعلی</span><span id="curState" class="muted small"></span></div>
+    <div id="curName" class="name">—</div><div class="sub"><span id="curPing" class="pingtxt">—</span></div></div>
+  <div class="stats"><div class="glass"><span class="label">مدت اتصال</span><b id="dur">—</b></div><div class="glass"><span class="label">دانلود</span><b id="down">—</b></div><div class="glass"><span class="label">آپلود</span><b id="up">—</b></div></div>
+  <div id="qCard" class="glass card clk"><div class="rec-head"><span class="label">حجم باقی‌مانده</span><span id="qSync" class="warn small hidden">مصرف همگام نشده</span></div>
+    <div class="rec-head"><b id="qRem" class="qbig">—</b><span id="qPct" class="tag t-cur hidden"></span></div><div class="qbar"><i id="qBar"></i></div><span id="qTotal" class="muted small"></span></div>
+  <div class="glass card"><div class="rec-head"><span class="label">سرعت دانلود</span><span id="spNow" class="pingtxt small"></span></div><canvas id="spark" width="420" height="80"></canvas><p id="spHint" class="muted small c">پس از اتصال، نمودار زنده نمایش داده می‌شود.</p></div>
+</div></section>
+
+<section id="v-servers" class="view shellv"><div class="stack">
+  <div class="toolbar"><button class="btn small" id="retest"><i data-ico="refresh" class="mini"></i> بررسی پینگ</button><button class="btn small" id="refreshSub"><i data-ico="download" class="mini"></i> به‌روزرسانی لیست</button></div>
+  <p id="meta" class="muted small"></p><div id="list" class="list"></div>
+</div></section>
+
+<section id="v-sub" class="view shellv"><div class="stack">
+  <div class="ringc" id="ringc"><div><b id="ringV">—</b><span class="muted small">گیگ باقی‌مانده</span><b id="ringP" class="pingtxt"></b></div></div>
+  <div class="glass card"><div class="kv"><span class="muted">کد اشتراک</span><b id="sCode" class="green"></b></div><div class="kv"><span class="muted">حجم کل</span><b id="sTotal">—</b></div>
+    <div class="kv"><span class="muted">مصرف‌شده</span><b id="sUsed">—</b></div><div class="kv"><span class="muted">قیمت هر گیگ</span><b id="sPrice">—</b></div><p id="sSync" class="muted small"></p>
+    <button class="btn wide small" id="sRefresh">به‌روزرسانی وضعیت</button></div>
+  <div class="glass card recc"><b>خرید حجم</b><p class="muted small">مقدار گیگ مورد نظر را بنویسید تا قیمت را ببینید.</p>
+    <div class="field"><input id="gigs" class="codein" dir="ltr" inputmode="decimal" maxlength="7" placeholder="مثلاً ۱۰"></div>
+    <div class="kv"><span class="muted">مبلغ قابل پرداخت</span><b id="gTotal" class="pingtxt">—</b></div>
+    <button class="btn primary wide" id="tgBtn" disabled>ارسال درخواست خرید در تلگرام</button>
+    <div class="supnote" id="supNote"><span>⚠️</span><div><b>اگر ارسال به تلگرام مشکل داشت</b><br>به آیدی <span dir="ltr">@Nova_2585</span> مراجعه کنید (برای کپی، لمس کنید).</div></div>
+    <p class="muted small">پرداخت داخل برنامه انجام نمی‌شود؛ پیام برای Nova ارسال می‌شود و بعد از تأیید، حجم به حسابتان اضافه می‌شود.</p></div>
+  <div class="glass card inv"><b>دعوت دوستان</b><p id="invText" class="muted small"></p><button class="btn primary wide" id="invBtn">دعوت</button>
+    <button class="invcode" id="invCode"><span class="muted small">کد دعوت شما</span><b id="invCodeV"></b><em>کپی</em></button></div>
+</div></section>
+
+<section id="v-settings" class="view shellv"><div class="stack">
+  <div class="glass set"><span>اجرا هنگام ورود به ویندوز</span><label class="sw"><input type="checkbox" data-k="autoStart"><i></i></label></div>
+  <div class="glass set"><span>کوچک‌شدن به System Tray</span><label class="sw"><input type="checkbox" data-k="minimizeToTray"><i></i></label></div>
+  <div class="glass set"><span>اتصال خودکار هنگام شروع</span><label class="sw"><input type="checkbox" data-k="autoConnect"><i></i></label></div>
+  <div class="glass set col"><span>حالت اتصال</span><div class="seg" data-seg="mode"><button data-v="proxy">پروکسی سیستم</button><button data-v="tun">TUN (همه برنامه‌ها)</button></div><small class="muted" id="modeNote"></small></div>
+  <div class="glass set col"><span>تم</span><div class="seg" data-seg="theme"><button data-v="dark">تاریک</button><button data-v="light">روشن</button></div></div>
+  <div class="glass set col"><span>فاصله بررسی پینگ (ثانیه)</span><div class="seg" data-seg="pingInterval" data-num><button data-v="30">۳۰</button><button data-v="45">۴۵</button><button data-v="60">۶۰</button><button data-v="120">۱۲۰</button></div></div>
+  <div class="glass set col"><span>تعداد تلاش اتصال مجدد</span><div class="seg" data-seg="retries" data-num><button data-v="2">۲</button><button data-v="3">۳</button><button data-v="4">۴</button><button data-v="5">۵</button></div></div>
+  <div id="variantBox" class="glass set hidden"><span class="small">حالت سازگاری فعال: <b id="variantTxt"></b></span><button class="btn small" id="variantReset">بازنشانی</button></div>
+  <button class="btn wide" id="diagBtn">تشخیص مشکل اتصال</button><button class="btn wide" id="showLogs">مشاهده لاگ‌ها</button>
+  <button class="btn wide danger" id="logout">خروج از حساب (تغییر کد اشتراک)</button><button class="btn wide" id="quitBtn">خروج کامل</button>
+  <p class="muted small c">Nova Connect <span id="ver"></span> — دسترسی ادمین: <span id="adminTxt"></span></p>
+</div></section>
+</main>
+
+<div id="annP" class="modal"><div class="sheet"><div class="rec-head"><h3>اطلاعیه‌ها</h3><button class="icon-btn" id="annX">✕</button></div><div id="annList" class="annl"></div></div></div>
+<div id="quotaM" class="modal"><div class="sheet c"><div class="rec-head"><span></span><button class="icon-btn" id="qX">✕</button></div><div class="bigemo">⏳</div><h3>حجم شما تمام شد</h3>
+  <p class="muted">برای ادامه‌ی اتصال، حجم جدید تهیه کنید. فقط چند لحظه طول می‌کشد.</p><button class="btn primary wide" id="qBuy">افزایش حجم</button></div></div>
+<div id="upS" class="modal bottom"><div class="sheet c"><img class="logo-sm" src="../../assets/logo.svg" alt=""><h3>نسخه تازه Nova Connect آماده است ✨</h3><span class="tag t-cur" id="upVer"></span>
+  <p class="muted" id="upSub"></p><div class="glass card hidden" id="upLogBox"><span class="label">تازه‌ها</span><div id="upLog"></div></div>
+  <button class="btn primary wide" id="upGo">به‌روزرسانی حالا</button><button class="btn wide" id="upLater">بعداً</button></div></div>
+<div id="invS" class="modal bottom"><div class="sheet c"><h3>کد دعوت داری؟</h3><p class="muted small" id="invSub"></p>
+  <div class="field"><input id="invIn" class="codein" dir="ltr" inputmode="numeric" maxlength="6" placeholder="••••••"></div><div id="invErr" class="err"></div>
+  <button class="btn primary wide" id="invGo">ثبت کد دعوت</button><button class="btn wide" id="invSkip">کد دعوت ندارم</button></div></div>
+<div id="shareM" class="modal"><div class="sheet"><h3>دعوت از طریق</h3><div id="shareList" class="annl"></div><button class="btn wide" id="shareX">بستن</button></div></div>
+<div id="modal" class="modal"><div class="sheet"><h3 id="mTitle"></h3><pre id="mBody" dir="ltr"></pre><div class="row-gap"><button class="btn" id="mCopy">کپی</button><button class="btn primary" id="mClose">بستن</button></div></div></div>
+<script src="app.js"></script>
+</body></html>

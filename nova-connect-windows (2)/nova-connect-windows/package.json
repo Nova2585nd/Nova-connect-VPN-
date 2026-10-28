@@ -1,0 +1,59 @@
+{
+  "name": "nova-connect",
+  "version": "1.3.0",
+  "description": "Nova Connect - کلاینت ساده اتصال با Xray",
+  "main": "src/main/main.js",
+  "author": "Nova",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "icon": "electron scripts/make-icon.js",
+    "fetch-xray": "node scripts/fetch-xray.js",
+    "test": "node scripts/selftest.js",
+    "dist": "npm run icon && npm run fetch-xray && npm run fetch-tun && electron-builder --win --x64 --publish never",
+    "fetch-tun": "node scripts/fetch-tun.js"
+  },
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "app.nova.connect",
+    "productName": "Nova Connect",
+    "asar": true,
+    "files": [
+      "src/**",
+      "assets/**",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "resources/xray",
+        "to": "xray"
+      },
+      {
+        "from": "resources/tun",
+        "to": "tun"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.png",
+      "requestedExecutionLevel": "asInvoker"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "deleteAppDataOnUninstall": false,
+      "artifactName": "NovaConnect-Setup-${version}.${ext}"
+    }
+  },
+  "novaCode": 5
+}

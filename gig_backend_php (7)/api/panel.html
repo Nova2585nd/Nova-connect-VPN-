@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>پنل مدیریت</title>
+<style>
+:root{--bg:#eef1f7;--s:#fff;--t:#1b1f2a;--m:#6b7385;--b:#e4e8f0;--a:#4f46e5;--a2:#7c3aed;--err:#dc2626;--ok:#16a34a;--warn:#d97706;--sh:0 1px 3px rgba(16,24,40,.07),0 8px 24px rgba(16,24,40,.05)}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1118;--s:#181d27;--t:#e7eaf1;--m:#9aa3b5;--b:#283040;--a:#818cf8;--a2:#a78bfa;--err:#f87171;--ok:#4ade80;--warn:#fbbf24;--sh:0 1px 3px rgba(0,0,0,.5)}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:14px/1.8 Tahoma,system-ui,sans-serif}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:7px 14px;background:var(--a);color:#fff;transition:.15s}
+button:hover{filter:brightness(1.1)}button.g{background:transparent;color:var(--t);border:1px solid var(--b)}button.d{background:var(--err)}button.s{padding:3px 10px;font-size:.8rem}
+input,textarea,select{font:inherit;padding:8px 11px;border:1px solid var(--b);border-radius:10px;background:var(--bg);color:var(--t);transition:.15s}
+input{direction:ltr;text-align:left}textarea{width:100%;resize:vertical}
+input:focus,textarea:focus,select:focus{outline:0;border-color:var(--a);box-shadow:0 0 0 3px #4f46e522}
+a{color:var(--a)}h2{font-size:1rem;margin:0 0 12px;padding-inline-start:10px;border-inline-start:4px solid var(--a)}
+.r{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.m{color:var(--m);font-size:.85rem}.grow{flex:1;min-width:140px}
+.c{background:var(--s);border:1px solid var(--b);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:var(--sh)}
+#login .c{max-width:340px;margin:18vh auto}
+.layout{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+.side{background:linear-gradient(170deg,var(--a),var(--a2));color:#fff;padding:18px 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px}
+.brand{font-size:1.1rem;font-weight:700;padding:6px 10px 14px}
+#nav button{display:block;width:100%;text-align:start;background:transparent;color:#fff;opacity:.85;padding:10px 12px;border-radius:12px}
+#nav button.on,#nav button:hover{background:#ffffff26;opacity:1}
+.sidefoot{margin-top:auto;display:flex;flex-direction:column;gap:6px}.sidefoot a{color:#fff;opacity:.85;padding:4px 12px;text-decoration:none}
+.sidefoot button{background:#ffffff1f}
+main{padding:18px;min-width:0}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}.bar h1{font-size:1.2rem;margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;flex:1}.chips a{background:var(--s);border:1px solid var(--b);padding:2px 12px;border-radius:999px;text-decoration:none;font-size:.85rem}
+.hide{display:none}
+.st{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.tile{background:linear-gradient(135deg,#4f46e515,#7c3aed15);border:1px solid var(--b);border-radius:14px;padding:12px;text-align:center;color:var(--m);font-size:.82rem}
+.tile b{display:block;font-size:1.5rem;color:var(--t);line-height:1.4}.tile button{margin-top:6px}
+.tw{overflow-x:auto;border:1px solid var(--b);border-radius:12px}table{border-collapse:collapse;width:100%;min-width:760px}
+th,td{padding:9px 10px;text-align:center;white-space:nowrap}th{background:var(--bg);color:var(--m);cursor:pointer;font-weight:600}
+tbody tr:nth-child(even){background:var(--bg)}tbody tr:hover{background:#4f46e50d}td.act{display:flex;gap:4px;justify-content:center}
+.bar2{width:90px;height:8px;background:var(--b);border-radius:6px;overflow:hidden;display:inline-block}.bar2 i{display:block;height:100%;background:var(--ok)}
+.bar2 i.warn{background:var(--warn)}.bar2 i.full{background:var(--err)}
+.pg{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:12px}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 4px;border-bottom:1px solid var(--b);flex-wrap:wrap}
+.row:last-child{border:0}.lnk{direction:ltr;color:var(--m);font-size:.8rem;word-break:break-all;flex:1;min-width:200px}
+.badge{font-size:.75rem;padding:1px 10px;border-radius:999px;border:1px solid var(--b)}.badge.on{color:var(--ok);border-color:var(--ok)}.badge.off{color:var(--err);border-color:var(--err)}
+#toast{position:fixed;bottom:16px;left:16px;padding:10px 16px;border-radius:12px;background:var(--s);border:1px solid var(--b);box-shadow:var(--sh);display:none;z-index:9}
+@media(max-width:800px){.layout{display:block}.side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center}.brand{padding:4px 8px}#nav{display:flex;flex-wrap:wrap;gap:4px}#nav button{width:auto;padding:6px 10px}.sidefoot{margin:0;flex-direction:row}}
+</style>
+</head>
+<body>
+<div id="login"><div class="c"><h2>ورود به پنل</h2><p class="r"><input id="pw" type="password" placeholder="رمز" class="grow"> <button onclick="login()">ورود</button></p></div></div>
+
+<div id="app" class="layout" hidden>
+<aside class="side"><div class="brand">پنل مدیریت</div><nav id="nav"></nav>
+<div class="sidefoot"><a href="test" target="_blank">🧪 صفحه‌ی تست APIها</a><a href="." target="_blank">🩺 وضعیت سرور</a><button onclick="logout()">خروج</button></div></aside>
+<main>
+<div class="bar"><h1 id="title"></h1><div id="chips" class="chips"></div><button class="g" onclick="loadAll()">بازخوانی</button></div>
+
+<section id="s-dash">
+<div class="c"><h2>آمار</h2><div class="st" id="stats"></div><p class="m" style="margin-bottom:0">«گیگ فروخته‌شده» و «گیگ هدیه» از سابقه‌ی تراکنش‌اند و قابل ریست‌اند؛ بقیه‌ی اعداد مستقیم از کاربران حساب می‌شوند.</p></div>
+<div class="c"><h2>افزایش گیگ یا مصرف با کد کاربر</h2><p class="r">
+<input id="ac" class="grow" placeholder="کد کاربر" inputmode="numeric"><input id="ag" class="grow" placeholder="مقدار گیگ (مثلاً 0.5)" inputmode="decimal">
+<button onclick="addGig($('ac').value,$('ag').value)">+ افزایش گیگ کل</button><button class="g" onclick="addUsage($('ac').value,$('ag').value)">+ ثبت مصرف</button></p></div>
+</section>
+
+<section id="s-users" class="hide"><div class="c">
+<div class="r" style="margin-bottom:12px"><input id="q" class="grow" placeholder="جستجو با کد یا نام" oninput="page=1;renderUsers()">
+<select id="ps" onchange="page=1;renderUsers()"><option>25</option><option>50</option><option>100</option></select>
+<button onclick="newUser()">+ کاربر جدید</button></div>
+<div class="tw"><table><thead><tr id="th"></tr></thead><tbody id="tb"></tbody></table></div>
+<div class="pg"><button class="g s" onclick="gotoPage(page-1)">قبلی</button><span id="pinfo" class="m"></span><button class="g s" onclick="gotoPage(page+1)">بعدی</button></div></div></section>
+
+<section id="s-links" class="hide"><div class="c"><h2>لینک‌های اشتراک</h2><div id="links"></div>
+<p class="r" style="margin-top:12px"><input id="nn" placeholder="نام (اختیاری)" style="width:160px"><input id="nl" class="grow" placeholder="https://..."><button onclick="addLink()">افزودن</button></p></div></section>
+
+<section id="s-ann" class="hide"><div class="c"><h2>اطلاعیه‌ها</h2><div id="ann"></div>
+<textarea id="nt" rows="3" placeholder="متن اطلاعیه" style="margin-top:12px"></textarea>
+<p class="r"><button onclick="addAnn()">ثبت اطلاعیه</button><button class="d" onclick="delAnn()">حذف همه</button></p></div></section>
+
+<section id="s-ver" class="hide"><div class="c"><h2>نسخه‌های اپ</h2><div id="ver"></div></div>
+<div class="c"><h2>ثبت نسخه‌ی جدید</h2><p class="r"><input id="vn" class="grow" placeholder="نام نسخه مثل 1.0.0"><input id="vc" placeholder="version_code" inputmode="numeric" style="width:130px">
+<label class="r"><input type="checkbox" id="vm"> اجباری</label></p>
+<p><input id="vl" placeholder="https://لینک دانلود" style="width:100%"></p>
+<textarea id="vt" rows="3" placeholder="توضیح نسخه (changelog، اختیاری)"></textarea>
+<p class="r"><button onclick="addVer()">ثبت نسخه</button></p></div></section>
+
+<section id="s-set" class="hide">
+<div class="c"><h2>ثبت‌نام کاربر جدید</h2><p class="r"><span id="regst" class="badge"></span><button id="regbtn" onclick="toggleReg()">—</button></p>
+<p class="m" style="margin-bottom:0">وقتی بسته است، ساخت کاربر جدید (حتی از همین پنل) خطای ۴۰۳ می‌دهد؛ اپ از این API استفاده نمی‌کند.</p></div>
+<div class="c"><h2>قیمت هر گیگ</h2><p class="r"><b id="price">—</b> تومان<input id="np" placeholder="قیمت جدید" inputmode="numeric" style="width:130px"><button onclick="setPrice()">ثبت</button></p></div>
+<div class="c"><h2>گیگ پیش‌فرض</h2>
+<p class="r">گیگ اولیه‌ی کاربر جدید: <b id="ig">—</b><input id="nig" placeholder="مثلاً 2" inputmode="decimal" style="width:110px"><button onclick="setDef('initial-gig','nig')">ثبت</button></p>
+<p class="r">گیگ هدیه‌ی هر دعوت: <b id="ib">—</b><input id="nib" placeholder="مثلاً 1" inputmode="decimal" style="width:110px"><button onclick="setDef('invite-bonus','nib')">ثبت</button></p></div>
+</section>
+</main></div>
+<div id="toast"></div>
+
+<script>
+const PASS='0183';
+const B=location.origin+location.pathname.replace(/\/(panel|panel\.html)\/?$/,'');
+const $=id=>document.getElementById(id);
+const num=v=>Number(String(v).replace(/[٠-٩۰-۹]/g,d=>'٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹'.indexOf(d)%10).replace(/[,٫]/g,'.'));
+const TABS=[['dash','📊','داشبورد'],['users','👥','کاربران'],['links','🔗','لینک‌های اشتراک'],['ann','📢','اطلاعیه‌ها'],['ver','⬆️','نسخه‌های اپ'],['set','⚙️','تنظیمات']];
+const cols=[['subscription_code','کد'],['label','نام'],['total_gig','کل گیگ'],['used_gig','مصرف'],['remaining_gig','مانده']];
+let users=[],links=[],sortKey='subscription_code',sortDir=1,page=1,regOpen=true;
+
+const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e};
+const btn=(x,c,f)=>{const b=el('button',c,x);b.onclick=f;return b};
+function toast(m,bad){const t=$('toast');t.textContent=m;t.style.color=bad?'var(--err)':'var(--ok)';t.style.display='block';setTimeout(()=>t.style.display='none',3200)}
+async function api(m,p,body){
+  const r=await fetch(B+p,{method:m,headers:body?{'Content-Type':'application/json'}:{},body:body?JSON.stringify(body):undefined});
+  const t=await r.text();let d=null;try{d=JSON.parse(t)}catch(e){}
+  if(!r.ok)throw new Error(d&&d.detail?d.detail:'خطا '+r.status);
+  return d;
+}
+async function act(fn,ok){try{await fn();if(ok)toast(ok);loadAll()}catch(e){toast(e.message,true)}}
+
+// ---- ورود و منو ----
+function login(){if($('pw').value===PASS){sessionStorage.ok='1';start()}else toast('رمز اشتباه است',true)}
+function logout(){sessionStorage.removeItem('ok');location.reload()}
+function start(){$('login').hidden=true;$('app').hidden=false;buildNav();show((location.hash||'#dash').slice(1));loadAll()}
+$('pw').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+function buildNav(){const n=$('nav');n.textContent='';TABS.forEach(([k,i,l])=>{const b=btn(i+'  '+l,'',()=>{location.hash=k;show(k)});b.dataset.t=k;n.appendChild(b)})}
+function show(k){
+  if(!TABS.some(t=>t[0]===k))k='dash';
+  TABS.forEach(([t,,l])=>{$('s-'+t).classList.toggle('hide',t!==k);if(t===k)$('title').textContent=l});
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===k));
+}
+window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
+if(sessionStorage.ok==='1')start();
+
+function loadAll(){loadUsers();loadLinks();loadSettings();loadAnn();loadVer()}
+
+// ---- کاربران ----
+async function loadUsers(){try{users=await api('GET','/users/');renderUsers();renderStats()}catch(e){toast(e.message,true)}}
+function gotoPage(p){page=p;renderUsers()}
+function renderUsers(){
+  const th=$('th');th.textContent='';
+  cols.forEach(([k,l])=>{const h=el('th','',l+(k===sortKey?(sortDir>0?' ▲':' ▼'):''));h.onclick=()=>{sortDir=k===sortKey?-sortDir:1;sortKey=k;renderUsers()};th.appendChild(h)});
+  th.appendChild(el('th','','مصرف'));th.appendChild(el('th','','عملیات'));
+  const q=$('q').value.trim().toLowerCase(),size=Number($('ps').value);
+  const rows=users.filter(u=>String(u.subscription_code).includes(q)||(u.label||'').toLowerCase().includes(q));
+  rows.sort((a,b)=>{const x=a[sortKey],y=b[sortKey];return (sortKey==='label'?String(x||'').localeCompare(String(y||''),'fa'):x-y)*sortDir});
+  const pages=Math.max(1,Math.ceil(rows.length/size));page=Math.min(Math.max(1,page),pages);
+  $('pinfo').textContent='صفحه '+page+' از '+pages+' ('+rows.length+' کاربر از '+users.length+')';
+  const tb=$('tb');tb.textContent='';
+  rows.slice((page-1)*size,page*size).forEach(u=>{
+    const tr=tb.insertRow();
+    tr.insertCell().textContent=u.subscription_code;
+    tr.insertCell().textContent=u.label||'—';
+    tr.insertCell().textContent=u.total_gig;tr.insertCell().textContent=u.used_gig;tr.insertCell().textContent=u.remaining_gig;
+    const pct=u.total_gig>0?Math.min(100,u.used_gig/u.total_gig*100):(u.used_gig>0?100:0);
+    const bar=el('span','bar2'),fill=el('i',pct>=100?'full':pct>=80?'warn':'');fill.style.width=pct+'%';bar.appendChild(fill);tr.insertCell().appendChild(bar);
+    const c=tr.insertCell();c.className='act';
+    c.append(btn('+گیگ','s',()=>{const g=prompt('چند گیگ اضافه شود؟','1');if(g)addGig(u.subscription_code,g)}),
+      btn('+مصرف','g s',()=>{const g=prompt('چند گیگ به مصرف اضافه شود؟','0.5');if(g)addUsage(u.subscription_code,g)}),
+      btn('تنظیم مصرف','g s',()=>{const v=prompt('مصرف جدید (گیگ):',u.used_gig);if(v!==null&&v!=='')act(()=>api('PUT','/users/'+u.subscription_code+'/usage',{used_gig:num(v)}),'ثبت شد')}),
+      btn('گیگ کل','g s',()=>{const t=prompt('کل گیگ:',u.total_gig);if(t!==null&&t!=='')act(()=>api('PUT','/users/'+u.subscription_code+'/stats',{total_gig:num(t)}),'ثبت شد')}),
+      btn('نام','g s',()=>{const v=prompt('نام (فقط برای خودت؛ کاربر نمی‌بیند):',u.label||'');if(v!==null)act(()=>api('PUT','/users/'+u.subscription_code+'/label',{label:v}),'ذخیره شد')}),
+      btn('حذف','d s',()=>{if(confirm('کاربر '+u.subscription_code+' حذف شود؟ آمار مربوط به او هم پاک می‌شود.'))act(()=>api('DELETE','/users/'+u.subscription_code),'کاربر حذف شد')}));
+  });
+}
+function addGig(code,g){code=String(code).trim();g=num(g);if(!code||!(g>0))return toast('کد و مقدار معتبر وارد کن',true);act(()=>api('POST','/users/'+encodeURIComponent(code)+'/add-gig',{gig:g}),g+' گیگ اضافه شد')}
+function addUsage(code,g){code=String(code).trim();g=num(g);if(!code||!(g>0))return toast('کد و مقدار معتبر وارد کن',true);act(()=>api('POST','/users/'+encodeURIComponent(code)+'/add-usage',{gig:g}),g+' گیگ به مصرف اضافه شد')}
+function newUser(){act(async()=>{const u=await api('POST','/users/');prompt('کاربر ساخته شد. کد اشتراک:',u.subscription_code)})}
+
+// ---- آمار ----
+async function renderStats(){
+  const s=k=>users.reduce((a,u)=>a+u[k],0),n=v=>Math.round(v*100)/100,box=$('stats');
+  const tile=(l,v,reset)=>{const d=el('div','tile');d.append(l,el('b','',v));if(reset)d.appendChild(btn('ریست','g s',()=>{if(confirm('آمار «'+l+'» صفر شود؟ فقط سابقه‌ی تراکنش پاک می‌شود، نه گیگ کاربران.'))act(()=>api('POST','/stats/reset',{stat:reset}),'ریست شد')}));return d};
+  const tiles=[tile('کل کاربران',users.length),tile('گیگ کل',n(s('total_gig'))),tile('مصرف کل',n(s('used_gig'))),tile('مانده کل',n(s('remaining_gig')))];
+  try{const m=await api('GET','/stats/summary');tiles.push(tile('گیگ فروخته‌شده',m.sold_gig,'sold_gig'),tile('گیگ هدیه/رایگان',m.gifted_gig,'gifted_gig'))}catch(e){}
+  box.textContent='';tiles.forEach(t=>box.appendChild(t));
+}
+
+// ---- لینک‌ها ----
+async function loadLinks(){try{links=await api('GET','/subscriptions/');renderLinks()}catch(e){toast(e.message,true)}}
+function linkName(l,i){return l.name||('سابسکرایبشن '+(i+1))}
+function renderLinks(){
+  const ch=$('chips');ch.textContent='';
+  links.forEach((l,i)=>{const a=el('a','',linkName(l,i));a.href=l.link;a.target='_blank';a.rel='noopener';ch.appendChild(a)});
+  const box=$('links');box.textContent='';
+  if(!links.length)box.appendChild(el('p','m','لینکی ثبت نشده'));
+  links.forEach((l,i)=>{const r=el('div','row');r.append(el('b','',linkName(l,i)),el('span','lnk',l.link),
+    btn('نام‌گذاری','g s',()=>{const v=prompt('نام لینک (خالی = حذف نام):',l.name||'');if(v!==null)act(()=>api('PUT','/subscriptions/'+l.id,{name:v}),'ذخیره شد')}),
+    btn('حذف','d s',()=>{if(confirm('حذف شود؟'))act(()=>api('DELETE','/subscriptions/?link='+encodeURIComponent(l.link)),'حذف شد')}));box.appendChild(r)});
+}
+function addLink(){const v=$('nl').value.trim();if(!v)return;act(async()=>{await api('POST','/subscriptions/',{link:v,name:$('nn').value.trim()});$('nl').value='';$('nn').value=''},'اضافه شد')}
+
+// ---- اطلاعیه‌ها ----
+async function loadAnn(){try{const a=await api('GET','/announcements/'),box=$('ann');box.textContent='';
+  if(!a.length)box.appendChild(el('p','m','اطلاعیه‌ای نیست'));
+  a.forEach(x=>{const r=el('div','row');r.append(el('span','',x.text),el('span','m',x.created_at.slice(0,10)));box.appendChild(r)})}catch(e){}}
+function addAnn(){const v=$('nt').value.trim();if(v)act(async()=>{await api('POST','/announcements/',{text:v});$('nt').value=''},'ثبت شد')}
+function delAnn(){if(confirm('همه‌ی اطلاعیه‌ها حذف شوند؟'))act(()=>api('DELETE','/announcements/'),'حذف شد')}
+
+// ---- نسخه‌ها ----
+async function loadVer(){try{const v=await api('GET','/versions/'),box=$('ver');box.textContent='';
+  if(!v.length)box.appendChild(el('p','m','نسخه‌ای ثبت نشده'));
+  v.forEach(x=>{const r=el('div','row'),info=el('div','grow');
+    info.append(el('b','',x.version_name+' (کد '+x.version_code+') '),el('span','badge '+(x.is_mandatory?'off':'on'),x.is_mandatory?'اجباری':'اختیاری'));
+    if(x.changelog)info.appendChild(el('div','m',x.changelog));
+    r.append(info,btn('حذف','d s',()=>{if(confirm('حذف شود؟'))act(()=>api('DELETE','/versions/'+x.version_code),'حذف شد')}));box.appendChild(r)})}catch(e){}}
+function addVer(){act(async()=>{await api('POST','/versions/',{version_name:$('vn').value.trim(),version_code:num($('vc').value),download_link:$('vl').value.trim(),is_mandatory:$('vm').checked,changelog:$('vt').value.trim()});['vn','vc','vl','vt'].forEach(i=>$(i).value='');$('vm').checked=false},'نسخه ثبت شد')}
+
+// ---- تنظیمات ----
+async function loadSettings(){try{
+  $('price').textContent=(await api('GET','/settings/price')).price_per_gig.toLocaleString('en');
+  $('ig').textContent=(await api('GET','/settings/initial-gig')).initial_test_gig;
+  $('ib').textContent=(await api('GET','/settings/invite-bonus')).invite_bonus_gig;
+  regOpen=(await api('GET','/settings/registration')).registration_open;
+  $('regst').textContent=regOpen?'ثبت‌نام باز است':'ثبت‌نام بسته است';$('regst').className='badge '+(regOpen?'on':'off');
+  $('regbtn').textContent=regOpen?'بستن ثبت‌نام':'باز کردن ثبت‌نام';$('regbtn').className=regOpen?'d':'';
+}catch(e){}}
+function toggleReg(){act(()=>api('PUT','/settings/registration',{open:!regOpen}),regOpen?'ثبت‌نام بسته شد':'ثبت‌نام باز شد')}
+function setPrice(){const v=num($('np').value);if(v>0)act(async()=>{await api('PUT','/settings/price',{price:v});$('np').value=''},'قیمت ثبت شد')}
+function setDef(path,id){const raw=$(id).value.trim(),v=num(raw);if(raw===''||!(v>=0))return toast('عدد معتبر وارد کن',true);act(async()=>{await api('PUT','/settings/'+path,{gig:v});$(id).value=''},'ثبت شد')}
+</script>
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تست APIهای Gig Backend</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --surface: #ffffff; --text: #1b1f24; --muted: #5d6673;
+    --border: #dfe3e8; --accent: #2563eb; --accent-text: #ffffff;
+    --ok: #15803d; --err: #b91c1c; --code-bg: #f1f3f6;
+    --get: #0e7490; --post: #15803d; --put: #b45309; --delete: #b91c1c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12151a; --surface: #1b2027; --text: #e6e9ee; --muted: #9aa4b2;
+      --border: #2d343e; --accent: #3b82f6; --accent-text: #ffffff;
+      --ok: #4ade80; --err: #f87171; --code-bg: #12151a;
+      --get: #22d3ee; --post: #4ade80; --put: #fbbf24; --delete: #f87171;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: Tahoma, "Segoe UI", system-ui, sans-serif; line-height: 1.7;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 20px 16px 60px; }
+  h1 { font-size: 1.4rem; margin: 8px 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 18px; font-size: .9rem; }
+  .panel, .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 14px;
+  }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+  label { display: flex; flex-direction: column; font-size: .8rem; color: var(--muted); gap: 4px; flex: 1 1 180px; }
+  input {
+    font: inherit; padding: 8px 10px; border-radius: 8px; direction: ltr; text-align: left;
+    border: 1px solid var(--border); background: var(--bg); color: var(--text);
+  }
+  input[type="checkbox"] { width: 20px; height: 20px; padding: 0; align-self: flex-start; }
+  input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  button {
+    font: inherit; cursor: pointer; border: 0; border-radius: 8px; padding: 9px 18px;
+    background: var(--accent); color: var(--accent-text);
+  }
+  button:disabled { opacity: .6; cursor: wait; }
+  button.secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+  button.small { padding: 2px 10px; font-size: .75rem; }
+  .card-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+  .method { font-weight: 700; font-size: .75rem; padding: 2px 8px; border-radius: 6px; border: 1px solid currentColor; direction: ltr; }
+  .GET { color: var(--get); } .POST { color: var(--post); } .PUT { color: var(--put); } .DELETE { color: var(--delete); }
+  .path { direction: ltr; font-family: ui-monospace, Consolas, monospace; font-size: .9rem; }
+  .title { color: var(--muted); font-size: .85rem; margin-inline-start: auto; }
+  .badge { font-size: .75rem; padding: 2px 8px; border-radius: 999px; }
+  .badge.ok { color: var(--ok); border: 1px solid var(--ok); }
+  .badge.err { color: var(--err); border: 1px solid var(--err); }
+  pre {
+    direction: ltr; text-align: left; margin: 10px 0 0; padding: 10px 12px; border-radius: 8px;
+    background: var(--code-bg); border: 1px solid var(--border);
+    font-family: ui-monospace, Consolas, monospace; font-size: .8rem;
+    white-space: pre-wrap; word-break: break-word; max-height: 260px; overflow: auto;
+  }
+  pre:empty { display: none; }
+  .curl-wrap { margin-top: 12px; }
+  .curl-head { display: flex; justify-content: space-between; align-items: center; direction: ltr; color: var(--muted); font-size: .75rem; }
+  pre.curl { margin-top: 4px; max-height: none; }
+  .summary { font-weight: 600; }
+  .note { color: var(--muted); font-size: .8rem; margin-top: 8px; }
+.desc{margin:0 0 10px;color:var(--muted);font-size:.85rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>تست APIهای Gig Backend</h1>
+  <p class="sub">هر کارت یک API است؛ مقدارهای تستی از قبل پر شده‌اند و می‌توانی تغییرشان بدهی. زیر هر کارت دستور curl معادل هم نوشته شده.</p>
+
+  <div class="panel">
+    <div class="row">
+      <label>آدرس سرور
+        <input id="base" type="text" spellcheck="false">
+      </label>
+      <label>کد اشتراک کاربر (بعد از ساخت کاربر خودکار پر می‌شود)
+        <input id="code" type="text" inputmode="numeric" placeholder="مثلاً 123456">
+      </label>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <button id="runAll">تست همه به ترتیب</button>
+      <span id="summary" class="summary"></span>
+    </div>
+    <p class="note">«تست همه» داده‌ی واقعی در دیتابیس می‌سازد (یک کاربر، یک اطلاعیه و ...) و قیمت هر گیگ را عوض می‌کند. نسخه‌ی تستی اپ را خودش حذف می‌کند.</p>
+    <p class="note">دستورهای curl برای ترمینال لینوکس، مک و Git Bash هستند. در CMD ویندوز به جای ' از " استفاده کن و داخل JSON هر " را به \" تبدیل کن.</p>
+  </div>
+
+  <div id="cards"></div>
+</div>
+
+<script>
+  const baseInput = document.getElementById('base');
+  const codeInput = document.getElementById('code');
+  baseInput.value = location.protocol.startsWith('http')
+    ? location.origin + location.pathname.replace(/\/(test|test_page\.html)\/?$/, '')
+    : 'https://your-domain.com/api';
+
+  // in: body | query | none. فیلد با inPath:true داخل مسیر قرار می‌گیرد.
+  // مسیرهای دارای {code} از فیلد «کد اشتراک» بالای صفحه پر می‌شوند.
+  const endpoints = [
+    { method: 'POST', path: '/users/', title: 'ساخت کاربر جدید (بدون ورودی)', in: 'none', fields: [],
+      onSuccess: d => {
+        codeInput.value = d.subscription_code;
+        const cd = document.querySelector('input[name="code"]'); if (cd) cd.value = d.subscription_code;
+      } },
+    { method: 'GET', path: '/users/', title: 'دریافت همه‌ی کاربران', in: 'none', fields: [] },
+    { method: 'GET', path: '/users/{code}', title: 'مشاهده‌ی کاربر', in: 'none', fields: [] },
+    { method: 'PUT', path: '/users/{code}/label', title: 'نام‌گذاری مخفی کاربر', in: 'body',
+      fields: [{ name: 'label', type: 'text', value: 'کاربر تستی' }] },
+    { method: 'PUT', path: '/users/{code}/stats', title: 'ویرایش آمار کاربر', in: 'body',
+      fields: [
+        { name: 'total_gig', type: 'number', value: 15 },
+      ] },
+    { method: 'PUT', path: '/users/{code}/usage', title: 'ویرایش میزان مصرف', in: 'body',
+      fields: [{ name: 'used_gig', type: 'number', value: 3 }] },
+    { method: 'POST', path: '/users/invite/{code}', title: 'ثبت دعوت (+۱ گیگ)', in: 'none', fields: [] },
+    { method: 'POST', path: '/users/{code}/add-gig', title: 'افزایش گیگ کل کاربر', in: 'body',
+      fields: [{ name: 'gig', type: 'number', value: 0.5 }] },
+    { method: 'POST', path: '/users/{code}/add-usage', title: 'افزودن به مصرف کاربر', in: 'body',
+      fields: [{ name: 'gig', type: 'number', value: 0.5 }] },
+    { method: 'POST', path: '/usage/report', title: 'گزارش مصرف از اپ', in: 'body',
+      fields: [
+        { name: 'code', type: 'number', value: '' },
+        { name: 'device_id', type: 'text', value: 'test-device' },
+        { name: 'total_bytes', type: 'number', value: 536870912 },
+      ] },
+    { method: 'GET', path: '/stats/summary', title: 'خلاصه‌ی آمار', in: 'none', fields: [] },
+    { method: 'POST', path: '/stats/reset', title: 'ریست یک آمار', in: 'body',
+      fields: [{ name: 'stat', type: 'text', value: 'sold_gig' }], skipAll: true },
+    { method: 'GET', path: '/transactions/', title: 'لیست تراکنش‌ها', in: 'query',
+      fields: [{ name: 'limit', type: 'number', value: 20 }] },
+    { method: 'GET', path: '/settings/registration', title: 'وضعیت ثبت‌نام کاربر جدید', in: 'none', fields: [] },
+    { method: 'PUT', path: '/settings/registration', title: 'باز/بسته کردن ثبت‌نام', in: 'body',
+      fields: [{ name: 'open', type: 'checkbox', value: true }], skipAll: true },
+    { method: 'GET', path: '/settings/initial-gig', title: 'گیگ اولیه‌ی کاربر جدید', in: 'none', fields: [] },
+    { method: 'PUT', path: '/settings/initial-gig', title: 'ویرایش گیگ اولیه‌ی کاربر جدید', in: 'body',
+      fields: [{ name: 'gig', type: 'number', value: 2 }] },
+    { method: 'GET', path: '/settings/invite-bonus', title: 'گیگ هدیه‌ی دعوت', in: 'none', fields: [] },
+    { method: 'PUT', path: '/settings/invite-bonus', title: 'ویرایش گیگ هدیه‌ی دعوت', in: 'body',
+      fields: [{ name: 'gig', type: 'number', value: 1 }] },
+    { method: 'GET', path: '/settings/price', title: 'قیمت فعلی هر گیگ', in: 'none', fields: [] },
+    { method: 'PUT', path: '/settings/price', title: 'ویرایش قیمت هر گیگ', in: 'body',
+      fields: [{ name: 'price', type: 'number', value: 9000 }] },
+    { method: 'POST', path: '/announcements/', title: 'ساخت اطلاعیه', in: 'body',
+      fields: [{ name: 'text', type: 'text', value: 'این یک اطلاعیه‌ی تستی است' }] },
+    { method: 'GET', path: '/announcements/', title: 'دریافت همه‌ی اطلاعیه‌ها', in: 'none', fields: [] },
+    { method: 'DELETE', path: '/announcements/', title: 'حذف همه‌ی اطلاعیه‌ها', in: 'none', fields: [], skipAll: true },
+    { method: 'POST', path: '/subscriptions/', title: 'ساخت لینک اشتراک', in: 'body',
+      fields: [
+        { name: 'name', type: 'text', value: 'سرور تستی' },
+        { name: 'link', type: 'text', value: 'https://example.com/sub/test123' },
+      ] },
+    { method: 'DELETE', path: '/subscriptions/', title: 'حذف لینک اشتراک', in: 'query',
+      fields: [{ name: 'link', type: 'text', value: 'https://example.com/sub/test123' }] },
+    { method: 'GET', path: '/subscriptions/', title: 'دریافت همه‌ی لینک‌ها', in: 'none', fields: [] },
+    { method: 'PUT', path: '/subscriptions/{id}', title: 'نام‌گذاری لینک اشتراک', in: 'body',
+      fields: [
+        { name: 'id', type: 'number', value: 1, inPath: true },
+        { name: 'name', type: 'text', value: 'نام جدید' },
+      ], skipAll: true },
+    { method: 'POST', path: '/versions/', title: 'ثبت نسخه‌ی جدید اپ', in: 'body',
+      fields: [
+        { name: 'version_name', type: 'text', value: '1.0.0' },
+        { name: 'version_code', type: 'number', value: 1 },
+        { name: 'download_link', type: 'text', value: 'https://example.com/app-1.0.0.apk' },
+        { name: 'is_mandatory', type: 'checkbox', value: false },
+        { name: 'changelog', type: 'text', value: 'نسخه‌ی تستی' },
+      ] },
+    { method: 'GET', path: '/versions/', title: 'لیست نسخه‌ها', in: 'none', fields: [] },
+    { method: 'GET', path: '/versions/check', title: 'بررسی آپدیت (اپ این را صدا می‌زند)', in: 'query',
+      fields: [{ name: 'current_code', type: 'number', value: 0 }] },
+    { method: 'DELETE', path: '/versions/{version_code}', title: 'حذف نسخه', in: 'none',
+      fields: [{ name: 'version_code', type: 'number', value: 1, inPath: true }] },
+    { method: 'DELETE', path: '/users/{code}', title: 'حذف کاربر (با تمام آمارش)', in: 'none', fields: [] },
+  ];
+
+  const DESC = {
+    'POST /users/': 'کاربر جدید می‌سازد. هیچ ورودی نمی‌گیرد؛ کد ۶ رقمی یکتا خودکار ساخته می‌شود و گیگ اولیه از تنظیمات داده می‌شود. اگر ثبت‌نام بسته باشد خطای ۴۰۳ می‌دهد.',
+    'GET /users/': 'همه‌ی کاربران را با گیگ کل، مصرف، مانده و مجموع خرید برمی‌گرداند.',
+    'GET /users/{code}': 'اطلاعات یک کاربر را با کد اشتراک می‌دهد؛ اگر نباشد ۴۰۴.',
+    'PUT /users/{code}/stats': 'گیگ کل کاربر را روی مقدار داده‌شده می‌گذارد. مانده خودکار حساب می‌شود.',
+    'PUT /users/{code}/usage': 'مصرف را روی مقدار داده‌شده «تنظیم» می‌کند (جایگزین مقدار قبلی). مصرف می‌تواند از گیگ کل بیشتر شود؛ مانده صفر می‌ماند.',
+    'POST /users/invite/{code}': 'ثبت یک دعوت: مقدار تنظیم «گیگ هدیه‌ی دعوت» (پیش‌فرض ۱) به گیگ کل کاربر اضافه می‌شود.',
+    'POST /users/{code}/add-gig': 'gig را به گیگ کل کاربر اضافه می‌کند (فقط حجم؛ مبلغی ثبت نمی‌شود).',
+    'POST /users/{code}/add-usage': 'gig را به مصرف قبلی «اضافه» می‌کند (مثلاً 0.5). مانده هیچ‌وقت منفی نمی‌شود.',
+    'POST /usage/report': 'اپ اینجا مصرفش را می‌فرستد. total_bytes عدد «تجمعی» کل ترافیک این نصب است؛ سرور فقط اختلاف با گزارش قبلی را اضافه می‌کند، پس تکرار گزارش مصرف را دو برابر نمی‌کند. با کد کاربر کار می‌کند (بعد از «ساخت کاربر جدید» خودکار پر می‌شود).',
+    'GET /stats/summary': 'تعداد کاربران، گیگ فروخته‌شده، گیگ هدیه/رایگان، گیگ کل و مصرف کل.',
+    'GET /transactions/': 'آخرین تراکنش‌های حجم (purchase، invite، free، adjust)، جدیدترین اول.',
+    'PUT /users/{code}/label': 'یک نام فقط برای خودت روی کاربر می‌گذارد. کاربر و اپ این نام را نمی‌بینند؛ در پاسخ GET /users/{code} نمی‌آید. نام خالی = حذف نام.',
+    'DELETE /users/{code}': 'کاربر را همراه با دستگاه‌ها و تراکنش‌هایش حذف می‌کند؛ آمار مربوط به او هم کم می‌شود. برگشت‌ناپذیر. در «تست همه» آخرین مرحله است و کاربر تستی را پاک می‌کند.',
+    'PUT /subscriptions/{id}': 'روی لینک اشتراک نام می‌گذارد (id در GET /subscriptions/ هست). نام خالی = حذف نام. در «تست همه» اجرا نمی‌شود.',
+    'POST /stats/reset': 'یک آمار را صفر می‌کند: sold_gig (گیگ فروخته‌شده) یا gifted_gig (گیگ هدیه/رایگان). فقط سابقه‌ی تراکنش پاک می‌شود، نه گیگ کاربران. در «تست همه» اجرا نمی‌شود.',
+    'GET /settings/registration': 'نشان می‌دهد ثبت‌نام کاربر جدید باز است یا بسته.',
+    'PUT /settings/registration': 'با open=false ثبت‌نام کاربر جدید را می‌بندد (POST /users/ خطای ۴۰۳ می‌دهد) و با open=true باز می‌کند. در «تست همه» اجرا نمی‌شود.',
+    'GET /settings/initial-gig': 'گیگ اولیه‌ای که هر کاربر جدید می‌گیرد.',
+    'PUT /settings/initial-gig': 'گیگ اولیه‌ی کاربران جدید را عوض می‌کند (۰ مجاز است). روی کاربران قبلی اثر ندارد.',
+    'GET /settings/invite-bonus': 'گیگ هدیه‌ای که هر دعوت می‌دهد.',
+    'PUT /settings/invite-bonus': 'گیگ هدیه‌ی هر دعوت را عوض می‌کند (۰ مجاز است).',
+    'GET /settings/price': 'قیمت فعلی هر گیگ (تومان) را برمی‌گرداند.',
+    'PUT /settings/price': 'قیمت هر گیگ را عوض می‌کند. روی خریدهای قبلی اثر ندارد.',
+    'POST /announcements/': 'یک اطلاعیه‌ی جدید ثبت می‌کند.',
+    'GET /announcements/': 'همه‌ی اطلاعیه‌ها را برمی‌گرداند، جدیدترین اول.',
+    'DELETE /announcements/': 'همه‌ی اطلاعیه‌ها را حذف می‌کند (برگشت‌ناپذیر). در «تست همه» اجرا نمی‌شود.',
+    'POST /subscriptions/': 'یک لینک سابسکرایبشن ثبت می‌کند. name اختیاری است (نام نمایشی در پنل). لینک تکراری خطای ۴۰۹ می‌دهد.',
+    'GET /subscriptions/': 'همه‌ی لینک‌های ثبت‌شده را برمی‌گرداند.',
+    'DELETE /subscriptions/': 'لینکِ داده‌شده را حذف می‌کند (لینک به‌صورت پارامتر آدرس می‌آید).',
+    'POST /versions/': 'نسخه‌ی جدید اپ را ثبت می‌کند. version_code عدد صحیح و یکتاست و لینک باید https باشد.',
+    'GET /versions/': 'لیست نسخه‌های اپ، جدیدترین اول.',
+    'GET /versions/check': 'اپ نسخه‌ی خودش (current_code) را می‌فرستد و می‌فهمد آپدیت هست یا اجباری است.',
+    'DELETE /versions/{version_code}': 'نسخه‌ای را با version_code حذف می‌کند.',
+  };
+  const cardsEl = document.getElementById('cards');
+
+  // ---------- ساخت درخواست ----------
+  function readValues(ep) {
+    const values = {};
+    ep.fields.forEach(f => {
+      const el = ep.card.querySelector('[name="' + f.name + '"]');
+      if (f.type === 'checkbox') { values[f.name] = el.checked; return; }
+      if (el.value === '') return;
+      values[f.name] = f.type === 'number' ? Number(el.value) : el.value;
+    });
+    return values;
+  }
+
+  // مسیر نهایی را می‌سازد و فیلدهای داخل مسیر را از values حذف می‌کند.
+  // اگر کد اشتراک لازم باشد و نبود، codeFallback (یا null) برمی‌گردد.
+  function resolvePath(ep, values, codeFallback) {
+    let path = ep.path;
+    if (path.includes('{code}')) {
+      const code = codeInput.value.trim() || codeFallback;
+      if (!code) return null;
+      path = path.replace('{code}', encodeURIComponent(code));
+    }
+    ep.fields.forEach(f => {
+      if (f.inPath && values[f.name] !== undefined) {
+        path = path.replace('{' + f.name + '}', encodeURIComponent(values[f.name]));
+        delete values[f.name];
+      }
+    });
+    return path;
+  }
+
+  function baseUrl() { return baseInput.value.trim().replace(/\/+$/, ''); }
+
+  function shq(s) { return "'" + String(s).replace(/'/g, "'\\''") + "'"; }
+
+  function buildCurl(ep) {
+    const values = readValues(ep);
+    const path = resolvePath(ep, values, 'SUBSCRIPTION_CODE');
+    let url = baseUrl() + path;
+    if (ep.in === 'query') url += '?' + new URLSearchParams(values).toString();
+    const parts = ['curl'];
+    if (ep.method !== 'GET') parts.push('-X ' + ep.method);
+    parts.push(shq(url));
+    if (ep.in === 'body') {
+      parts.push("-H 'Content-Type: application/json'");
+      parts.push('-d ' + shq(JSON.stringify(values)));
+    }
+    return parts.join(' \\\n  ');
+  }
+
+  function updateCurl(ep) { ep.curlPre.textContent = buildCurl(ep); }
+  function updateAllCurls() { endpoints.forEach(updateCurl); }
+
+  // ---------- ساخت کارت‌ها ----------
+  endpoints.forEach(ep => {
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    const head = document.createElement('div');
+    head.className = 'card-head';
+    head.innerHTML = '<span class="method"></span><span class="path"></span><span class="badge" hidden></span><span class="title"></span>';
+    head.querySelector('.method').textContent = ep.method;
+    head.querySelector('.method').classList.add(ep.method);
+    head.querySelector('.path').textContent = ep.path + (ep.in === 'query' ? '?' + ep.fields.map(f => f.name + '=…').join('&') : '');
+    head.querySelector('.title').textContent = ep.title;
+    card.appendChild(head);
+    const dsc = document.createElement('p');
+    dsc.className = 'desc';
+    dsc.textContent = DESC[ep.method + ' ' + ep.path] || '';
+    card.appendChild(dsc);
+
+    if (ep.fields.length) {
+      const row = document.createElement('div');
+      row.className = 'row';
+      ep.fields.forEach(f => {
+        const lab = document.createElement('label');
+        lab.textContent = f.name;
+        const inp = document.createElement('input');
+        inp.name = f.name;
+        inp.type = f.type;
+        if (f.type === 'checkbox') { inp.checked = !!f.value; } else { inp.value = f.value; }
+        if (f.type === 'number') inp.step = 'any';
+        lab.appendChild(inp);
+        row.appendChild(lab);
+      });
+      card.appendChild(row);
+    }
+
+    const actions = document.createElement('div');
+    actions.className = 'row';
+    actions.style.marginTop = '10px';
+    const btn = document.createElement('button');
+    btn.textContent = 'تست';
+    actions.appendChild(btn);
+    card.appendChild(actions);
+
+    // بخش curl
+    const curlWrap = document.createElement('div');
+    curlWrap.className = 'curl-wrap';
+    const curlHead = document.createElement('div');
+    curlHead.className = 'curl-head';
+    const curlLabel = document.createElement('span');
+    curlLabel.textContent = 'curl';
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'secondary small';
+    copyBtn.textContent = 'کپی';
+    curlHead.append(curlLabel, copyBtn);
+    const curlPre = document.createElement('pre');
+    curlPre.className = 'curl';
+    curlWrap.append(curlHead, curlPre);
+    card.appendChild(curlWrap);
+
+    const out = document.createElement('pre');
+    card.appendChild(out);
+
+    ep.card = card;
+    ep.btn = btn;
+    ep.out = out;
+    ep.curlPre = curlPre;
+    ep.badge = head.querySelector('.badge');
+
+    btn.addEventListener('click', () => callEndpoint(ep));
+    card.addEventListener('input', () => updateCurl(ep));
+    card.addEventListener('change', () => updateCurl(ep));
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(curlPre.textContent);
+      } catch (_) {
+        const ta = document.createElement('textarea');
+        ta.value = curlPre.textContent;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+      }
+      copyBtn.textContent = 'کپی شد';
+      setTimeout(() => { copyBtn.textContent = 'کپی'; }, 1500);
+    });
+
+    cardsEl.appendChild(card);
+    updateCurl(ep);
+  });
+
+  [baseInput, codeInput].forEach(el => el.addEventListener('input', updateAllCurls));
+
+  // ---------- اجرای تست ----------
+  function setBadge(ep, ok, text) {
+    ep.badge.hidden = false;
+    ep.badge.className = 'badge ' + (ok ? 'ok' : 'err');
+    ep.badge.textContent = text;
+  }
+
+  async function callEndpoint(ep) {
+    const values = readValues(ep);
+    const path = resolvePath(ep, values, '');
+    if (path === null) {
+      setBadge(ep, false, 'کد اشتراک خالی است');
+      ep.out.textContent = 'اول «ساخت کاربر جدید» را تست کن یا کد اشتراک را بالای صفحه وارد کن.';
+      return false;
+    }
+
+    let url = baseUrl() + path;
+    const opts = { method: ep.method, headers: {} };
+    if (ep.in === 'body') {
+      opts.headers['Content-Type'] = 'application/json';
+      opts.body = JSON.stringify(values);
+    } else if (ep.in === 'query') {
+      url += '?' + new URLSearchParams(values).toString();
+    }
+
+    ep.btn.disabled = true;
+    const started = performance.now();
+    try {
+      const res = await fetch(url, opts);
+      const text = await res.text();
+      const ms = Math.round(performance.now() - started);
+      let shown = text;
+      let data = null;
+      try { data = JSON.parse(text); shown = JSON.stringify(data, null, 2); } catch (_) {}
+      if (res.status === 204) shown = '(بدون محتوا)';
+      setBadge(ep, res.ok, res.status + ' · ' + ms + 'ms');
+      ep.out.textContent = shown;
+      if (res.ok && ep.onSuccess && data) { ep.onSuccess(data); updateAllCurls(); }
+      return res.ok;
+    } catch (err) {
+      setBadge(ep, false, 'خطای اتصال');
+      ep.out.textContent = 'اتصال به سرور برقرار نشد. آدرس سرور را بررسی کن و صفحه را از آدرس /test خود سرور باز کن.\n\n' + err;
+      return false;
+    } finally {
+      ep.btn.disabled = false;
+    }
+  }
+
+  document.getElementById('runAll').addEventListener('click', async e => {
+    const btn = e.currentTarget;
+    const summary = document.getElementById('summary');
+    btn.disabled = true;
+    let passed = 0;
+    const runList = endpoints.filter(e => !e.skipAll);
+    for (const ep of runList) {
+      summary.textContent = 'در حال تست: ' + ep.title + ' …';
+      if (await callEndpoint(ep)) passed++;
+    }
+    summary.textContent = passed + ' از ' + runList.length + ' تست موفق بود';
+    btn.disabled = false;
+  });
+</script>
+</body>
+</html>
