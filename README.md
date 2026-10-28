@@ -298,7 +298,7 @@ Please report reproducible issues with relevant application versions, operating 
 - **GitHub repository:** [https://github.com/Nova2585nd/Nova-connect-VPN-]
 - **Telegram:** [https://t.me/Nova_2585]
 - **X:** [https://x.com/Nova_2585_nd]
-- **Website:** [nova2585nd.ir]
+- **Website:** [https://nova2585nd.ir]
 - **Downloads:** [https://github.com/Nova2585nd/Nova-connect-VPN-/releases]
 
 Bug reports, technical feedback, and suggestions that help improve the project are welcome.
